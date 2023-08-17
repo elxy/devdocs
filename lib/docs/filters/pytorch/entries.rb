@@ -17,18 +17,23 @@ module Docs
         if section_id.starts_with? 'module-'
           section_id.remove('module-')
         else
-          name = get_breadcrumbs()[1]
+          results = get_breadcrumbs()
+          if results[-2].starts_with? 'torch'
+            name = results[-2]
+          else
+            name = results[1..-2].join('.')
+          end
           NAME_REPLACEMENTS.fetch(name, name)
         end
       end
 
       def get_type
-        name
+        get_breadcrumbs()[1]
       end
 
       def include_default_entry?
         # Only include API references, and ignore notes or design docs
-        !subpath.start_with? 'generated/' and type.start_with? 'torch'
+        type.start_with? 'torch'
       end
 
       def additional_entries
